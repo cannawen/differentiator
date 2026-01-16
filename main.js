@@ -1,40 +1,40 @@
 const assert = require('assert');
 
-calculateDerivative(symbolExtractor("1x+2+3x"))
+// pass in command line arg to enable tests
+const TESTING = process.argv[2];
 
-function symbolExtractor(equation) {
-    const terms = [... equation.matchAll(/(\d+x?))/g)];
-    const operations = [... equation.matchAll(([+/-])/g)];
-    return matches.reduce((match) => {
-        const match[1];
-    }, {coefficients: [], operators: []})
+function toDerivativeString(terms) {
+    return terms[1]
 }
 
-function calculateDerivative(symbols) {
-    return symbols.map((symbol) => {
-        const containsX = symbol.match(/x/,"");
-        console.log(containsX);
-        return symbol;
-    })
+if (TESTING) {
+    assert.deepEqual(parse("1+2x+3x+6"), {0: 7, 1: 5})
 }
 
-function toDerivativeString(coefficients) {
-    return coefficients.reduce((memo, coefficient) => {
-        return memo += coefficient;
-    }, "")
+function parse(equation) {
+    const matches = [... equation.matchAll(/(\d+x?)/g)];
+    return matches.map((match) => {
+        return match[1]; // gets an array of terms: [1,2x,3x,6]
+    }).reduce((memo, match) => {
+        if (match.includes("x")) {
+            memo[1] += parseInt(match.replace("x",""));
+        } else {
+            memo[0] += parseInt(match);
+        }
+        return memo;
+    }, {0: 0, 1: 0})
 }
 
 // assume variable is always named x
 function differentiate(equation) {
-    return toDerivativeString(calculateDerivative(symbolExtractor(equation)));
+    return toDerivativeString(parse(equation));
 }
 
-// pass in any command line arg to enable tests
-if (process.argv[2]) {
-    assert.strictEqual("0",differentiate("2"));
-    assert.strictEqual("0",differentiate("2+5"));
-    assert.strictEqual("2",differentiate("2x"));
-    assert.strictEqual("2",differentiate("2x+5"));
-    assert.strictEqual("2+2",differentiate("2x+2x"));
+if (TESTING) {
+    assert.deepEqual("0",differentiate("2"));
+    assert.deepEqual("0",differentiate("2+5"));
+    assert.deepEqual("2",differentiate("2x"));
+    assert.deepEqual("2",differentiate("2x+5"));
+    assert.deepEqual("4",differentiate("2x+2x"));
 }
 
