@@ -4,8 +4,11 @@ derivative("2x")
 
 // assume variable is always named x
 function derivative(equation) {
-    const matches = equation.match(/(\d+)x/g);
+    const matches = equation.matchAll(/(\d+)x/g);
     console.log(matches)
+    matches.forEach((e) => {
+        console.log(e)
+    })
 }
 
 // pass in any command line arg to enable tests
