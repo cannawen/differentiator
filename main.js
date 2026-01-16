@@ -41,7 +41,8 @@ if (TESTING) {
     assert.deepEqual("2",differentiate("2x+5"));
     assert.deepEqual("4",differentiate("2x+2x"));
     assert.deepEqual("1",differentiate("x"));
-    // assert.deepEqual("-2",differentiate("-2x"));
-    // assert.deepEqual("-1",differentiate("-x"));
+    assert.deepEqual("-1",differentiate("-x"));
+    assert.deepEqual("-2",differentiate("-2x"));
+    assert.deepEqual("-3",differentiate("-5x+2x+8-9"));
 }
 
