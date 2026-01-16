@@ -25,6 +25,10 @@ function parse(equation) {
     }, {0: 0, 1: 0})
 }
 
+if (TESTING) {
+    assert.deepEqual(preprocess("   x - 2x + 3x+x+x +  x -9 +6"), "1x-2x+3x+1x+1x+1x-9+6")
+}
+
 function preprocess(equation) {
     return equation.replaceAll(/\s/g,'').replaceAll(/-x/g,'-1x').replaceAll(/(?<!\d)x/g, '1x')
 }
@@ -44,5 +48,6 @@ if (TESTING) {
     assert.deepEqual("-1",differentiate("-x"));
     assert.deepEqual("-2",differentiate("-2x"));
     assert.deepEqual("-3",differentiate("-5x+2x+8-9"));
+    assert.deepEqual("2x",differentiate("x^2"));
 }
 
