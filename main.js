@@ -12,7 +12,7 @@ if (TESTING) {
 }
 
 function parse(equation) {
-    const matches = [... equation.matchAll(/(\d+x?)/g)];
+    const matches = [... equation.matchAll(/(-?\d+x?)/g)];
     return matches.map((match) => {
         return match[1]; // gets an array of terms: [1,2x,3x,6]
     }).reduce((memo, match) => {
@@ -25,9 +25,13 @@ function parse(equation) {
     }, {0: 0, 1: 0})
 }
 
+function preprocess(equation) {
+    return equation.replaceAll(/\s/g,'').replaceAll(/-x/g,'-1x').replaceAll(/(?<!\d)x/g, '1x')
+}
+
 // assume variable is always named x
 function differentiate(equation) {
-    return toDerivativeString(parse(equation));
+    return toDerivativeString(parse(preprocess(equation)));
 }
 
 if (TESTING) {
@@ -36,5 +40,8 @@ if (TESTING) {
     assert.deepEqual("2",differentiate("2x"));
     assert.deepEqual("2",differentiate("2x+5"));
     assert.deepEqual("4",differentiate("2x+2x"));
+    assert.deepEqual("1",differentiate("x"));
+    // assert.deepEqual("-2",differentiate("-2x"));
+    // assert.deepEqual("-1",differentiate("-x"));
 }
 
