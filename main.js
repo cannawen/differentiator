@@ -1,24 +1,24 @@
 const assert = require('assert');
 
-// assume variable is always named x
-function derivative(equation) {
+function coefficientExtractor(equation) {
     const matches = [... equation.matchAll(/(\d+)x/g)];
     return matches.map((match) => {
         return match[1];
     })
 }
 
-function derivativeToString(derivatives) {
-    if (derivatives.length === 0) {
+function toDerivativeString(coefficients) {
+    if (coefficients.length === 0) {
         return "0"
     }
-    return derivatives.reduce((memo, derivative) => {
-        return memo += derivative;
+    return coefficients.reduce((memo, coefficient) => {
+        return memo += coefficient;
     }, "")
 }
 
+// assume variable is always named x
 function differentiate(equation) {
-    return derivativeToString(derivative(equation));
+    return toDerivativeString(coefficientExtractor(equation));
 }
 
 // pass in any command line arg to enable tests
