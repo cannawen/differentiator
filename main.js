@@ -24,6 +24,9 @@ function differentiate(equation) {
 // pass in any command line arg to enable tests
 if (process.argv[2]) {
     assert.strictEqual("0",differentiate("2"));
+    assert.strictEqual("0",differentiate("2+5"));
     assert.strictEqual("2",differentiate("2x"));
+    assert.strictEqual("2",differentiate("2x+5"));
+    assert.strictEqual("2+2",differentiate("2x+2x"));
 }
 
