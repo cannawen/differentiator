@@ -1,8 +1,5 @@
 const assert = require('assert');
 
-console.log(derivativeToString(derivative("2")))
-console.log(derivativeToString(derivative("2x")))
-
 // assume variable is always named x
 function derivative(equation) {
     const matches = [... equation.matchAll(/(\d+)x/g)];
@@ -12,14 +9,21 @@ function derivative(equation) {
 }
 
 function derivativeToString(derivatives) {
+    if (derivatives.length === 0) {
+        return "0"
+    }
     return derivatives.reduce((memo, derivative) => {
         return memo += derivative;
     }, "")
 }
 
+function differentiate(equation) {
+    return derivativeToString(derivative(equation));
+}
+
 // pass in any command line arg to enable tests
 if (process.argv[2]) {
-    assert.strictEqual("0",derivative("2"));
-    assert.strictEqual("2",derivative("2x"));
+    assert.strictEqual("0",differentiate("2"));
+    assert.strictEqual("2",differentiate("2x"));
 }
 
