@@ -1,16 +1,24 @@
 const assert = require('assert');
 
-function coefficientExtractor(equation) {
-    const matches = [... equation.matchAll(/(\d+)x/g)];
-    return matches.map((match) => {
-        return match[1];
+calculateDerivative(symbolExtractor("1x+2+3x"))
+
+function symbolExtractor(equation) {
+    const terms = [... equation.matchAll(/(\d+x?))/g)];
+    const operations = [... equation.matchAll(([+/-])/g)];
+    return matches.reduce((match) => {
+        const match[1];
+    }, {coefficients: [], operators: []})
+}
+
+function calculateDerivative(symbols) {
+    return symbols.map((symbol) => {
+        const containsX = symbol.match(/x/,"");
+        console.log(containsX);
+        return symbol;
     })
 }
 
 function toDerivativeString(coefficients) {
-    if (coefficients.length === 0) {
-        return "0"
-    }
     return coefficients.reduce((memo, coefficient) => {
         return memo += coefficient;
     }, "")
@@ -18,7 +26,7 @@ function toDerivativeString(coefficients) {
 
 // assume variable is always named x
 function differentiate(equation) {
-    return toDerivativeString(coefficientExtractor(equation));
+    return toDerivativeString(calculateDerivative(symbolExtractor(equation)));
 }
 
 // pass in any command line arg to enable tests
