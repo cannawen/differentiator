@@ -8,8 +8,13 @@ function toDerivativeString(terms) {
 }
 
 if (TESTING) {
-    assert.deepEqual(parse("1+2x^1+3x^1+6"), {0: 7, 1: 5})
-    assert.deepEqual(parse("1+2x^1+3x^2+6"), {0: 7, 1: 2, 2:3})
+    assert.deepEqual(parse("1"), {0: 1})
+    assert.deepEqual(parse("1+1"), {0: 2})
+    assert.deepEqual(parse("1+1-5"), {0: -3})
+    assert.deepEqual(parse("1+2x^1"), {0: 1, 1: 2})
+    assert.deepEqual(parse("1+2x^1+3x^2"), {0: 1, 1: 2, 2:3})
+    assert.deepEqual(parse("-100x^34"), {34: -100})
+    assert.deepEqual(parse("2x^6-100x^34"), {6: 2, 34: -100})
 }
 
 function parse(equation) {
