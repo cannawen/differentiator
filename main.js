@@ -15,14 +15,20 @@ function parse(equation) {
     const matches = [... equation.matchAll(/(-?\d+x?)/g)];
     return matches.map((match) => {
         return match[1]; // gets an array of terms: [1,2x,3x,6]
-    }).reduce((memo, match) => {
+    }).reduce((memo, match) => {   
         if (match.includes("x")) {
+            if (memo[1] === undefined) {
+                memo[1] = 0
+            }
             memo[1] += parseInt(match.replace("x",""));
         } else {
+            if (memo[0] === undefined) {
+                memo[0] = 0
+            }
             memo[0] += parseInt(match);
         }
         return memo;
-    }, {0: 0, 1: 0})
+    }, {})
 }
 
 if (TESTING) {
