@@ -12,7 +12,7 @@ if (TESTING) {
     const testMemo = {}
     upsertTermIntoMemo("2",testMemo)
     assert.deepEqual(testMemo,{0:2});
-    upsertTermIntoMemo("2x",testMemo)
+    upsertTermIntoMemo("2x^1",testMemo)
     assert.deepEqual(testMemo,{0:2, 1:2});
 }
 
@@ -23,7 +23,7 @@ function upsertTermIntoMemo(term, memo) {
 
     const coefficient = parseInt(m[1]);
     const order = m[3] || 0;
-    
+
     if (memo[order] === undefined) {
         memo[order] = coefficient;
     } else {
@@ -52,11 +52,16 @@ function parse(equation) {
 }
 
 if (TESTING) {
-    assert.deepEqual(preprocess("   x - 2x + 3x+x+x +  x -9 +6"), "1x-2x+3x+1x+1x+1x-9+6")
+    assert.deepEqual(preprocess("5"), "5")
+    assert.deepEqual(preprocess("- 5"), "-5")
+    assert.deepEqual(preprocess("x"), "1x^1")
+    assert.deepEqual(preprocess("-x"), "-1x^1")
+    assert.deepEqual(preprocess("1+x"), "1+1x^1")
+    assert.deepEqual(preprocess("1-x-1"), "1-1x^1-1")
 }
 
 function preprocess(equation) {
-    return equation.replaceAll(/\s/g,'').replaceAll(/-x/g,'-1x').replaceAll(/(?<!\d)x/g, '1x')
+    return equation.replaceAll(/\s/g,"").replaceAll(/-x/g,"-1x").replaceAll(/(?<!\d)x/g, "1x").replaceAll(/x/g, "x^1")
 }
 
 // assume variable is always named x
