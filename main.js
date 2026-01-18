@@ -3,6 +3,10 @@ const assert = require("assert");
 // pass in command line arg to enable tests
 const TESTING = process.argv[2];
 
+if (TESTING) {
+    assert.deepEqual(differentiateTerms({2: 1}), [[1, 2]])
+}
+
 function differentiateTerms(terms) {
     return Object.entries(terms)
         .map((term) => {
@@ -15,6 +19,11 @@ function differentiateTerms(terms) {
         })
         .filter(terms => terms !== undefined); 
     // TODO Kind of sus we are turning a map {exp:coef,...} into a 2D array [[exp coef],...] randomly halfway through our program
+    // Perhaps create a new data structure?
+}
+
+if (TESTING) {
+    assert.deepEqual(toDerivativeString([[1, 2]]), "2x");
 }
 
 function toDerivativeString(terms) {
@@ -66,10 +75,11 @@ if (TESTING) {
     assert.deepEqual(preprocess("-x"), "-1x^1")
     assert.deepEqual(preprocess("1+x"), "1+1x^1")
     assert.deepEqual(preprocess("1-x-1"), "1-1x^1-1")
+    assert.deepEqual(preprocess("x^2"), "1x^2")
 }
 
 function preprocess(equation) {
-    return equation.replaceAll(/\s/g,"").replaceAll(/-x/g,"-1x").replaceAll(/(?<!\d)x/g, "1x").replaceAll(/x/g, "x^1")
+    return equation.replaceAll(/\s/g,"").replaceAll(/-x/g,"-1x").replaceAll(/(?<!\d)x/g, "1x").replaceAll(/x(?!\^)/g, "x^1")
 }
 
 // assume variable is always named x
