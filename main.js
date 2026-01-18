@@ -3,20 +3,24 @@ const assert = require("assert");
 // pass in command line arg to enable tests
 const TESTING = process.argv[2];
 
-function toDerivativeString(parsedTerms) {
-    return Object.entries(parsedTerms)
+function differentiateTerms(terms) {
+    return Object.entries(terms)
         .map((term) => {
             const exponent = parseInt(term[0]);
-            const coefficient = parseInt(term[1]); // I think this is already an int? Double check later.
-
-            const newExponent = exponent === 0 ? undefined : exponent - 1;
-            if (newExponent) {
-                return [newExponent, newExponent * coefficient];
+            const coefficient = parseInt(term[1]); // TODO I think this is already an int? Double check later.
+            if (exponent === 0) {
+                return undefined;
             }
+            return [exponent - 1, exponent * coefficient];
         })
-        .filter(terms => terms !== undefined)
+        .filter(terms => terms !== undefined); 
+    // TODO Kind of sus we are turning a map {exp:coef,...} into a 2D array [[exp coef],...] randomly halfway through our program
+}
+
+function toDerivativeString(terms) {
+    return terms
         // .sort((termA, termB) => termA[0] - termB[0])
-        .reduce(([exponent, coefficient], memo) => {
+        .reduce((memo, [exponent, coefficient]) => {
             switch (exponent) {
                 case 0:
                     memo += coefficient;
@@ -25,7 +29,7 @@ function toDerivativeString(parsedTerms) {
                     memo += coefficient + "x";
                     break;
                 default:
-                    memo +=coefficient + "x^" + exponent;
+                    memo += coefficient + "x^" + exponent;
                     break;
             }
             return memo;
@@ -70,7 +74,7 @@ function preprocess(equation) {
 
 // assume variable is always named x
 function differentiate(equation) {
-    return toDerivativeString(parse(preprocess(equation)));
+    return toDerivativeString(differentiateTerms(parse(preprocess(equation))));
 }
 
 if (TESTING) {
