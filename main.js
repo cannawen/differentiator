@@ -4,7 +4,7 @@ const assert = require('assert');
 const TESTING = process.argv[2];
 
 function toDerivativeString(terms) {
-    return terms[1]
+    return terms[1] || "0"
 }
 
 if (TESTING) {
