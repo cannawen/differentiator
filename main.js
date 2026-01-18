@@ -1,4 +1,4 @@
-const assert = require('assert');
+const assert = require("assert");
 
 // pass in command line arg to enable tests
 const TESTING = process.argv[2];
