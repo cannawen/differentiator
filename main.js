@@ -98,4 +98,8 @@ if (TESTING) {
     assert.deepEqual("-2",differentiate("-2x"));
     assert.deepEqual("-3",differentiate("-5x+2x+8-9"));
     assert.deepEqual("2x",differentiate("x^2"));
+    assert.deepEqual("-4x",differentiate("-2x^2"));
+    assert.deepEqual("1-4x",differentiate("x-2x^2"));
+    assert.deepEqual("1+4x",differentiate("x+2x^2"));
+    // display derivative string with higher exponent in front
 }
