@@ -3,8 +3,33 @@ const assert = require("assert");
 // pass in command line arg to enable tests
 const TESTING = process.argv[2];
 
-function toDerivativeString(terms) {
-    return terms[1] || "0"
+function toDerivativeString(parsedTerms) {
+    return Object.entries(parsedTerms)
+        .map((term) => {
+            const exponent = parseInt(term[0]);
+            const coefficient = parseInt(term[1]); // I think this is already an int? Double check later.
+
+            const newExponent = exponent === 0 ? undefined : exponent - 1;
+            if (newExponent) {
+                return [newExponent, newExponent * coefficient];
+            }
+        })
+        .filter(terms => terms !== undefined)
+        // .sort((termA, termB) => termA[0] - termB[0])
+        .reduce(([exponent, coefficient], memo) => {
+            switch (exponent) {
+                case 0:
+                    memo += coefficient;
+                    break;
+                case 1:
+                    memo += coefficient + "x";
+                    break;
+                default:
+                    memo +=coefficient + "x^" + exponent;
+                    break;
+            }
+            return memo;
+        },"") || "0";
 }
 
 if (TESTING) {
