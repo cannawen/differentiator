@@ -8,47 +8,21 @@ function toDerivativeString(terms) {
 }
 
 if (TESTING) {
-    assert.deepEqual(parse("1+2x+3x+6"), {0: 7, 1: 5})
-    const testMemo = {}
-    upsertTermIntoMemo("2",testMemo)
-    assert.deepEqual(testMemo,{0:2});
-    upsertTermIntoMemo("2x^1",testMemo)
-    assert.deepEqual(testMemo,{0:2, 1:2});
+    assert.deepEqual(parse("1+2x^1+3x^1+6"), {0: 7, 1: 5})
+    assert.deepEqual(parse("1+2x^1+3x^2+6"), {0: 7, 1: 2, 2:3})
 }
 
-// this feels so wrong in my bones, to change the object in-place
-// instead of returning a memo... shudder
-function upsertTermIntoMemo(term, memo) {
-    const m = term.match(/(\d+)(x\^)?(\d+)?/);
-
-    const coefficient = parseInt(m[1]);
-    const order = m[3] || 0;
-
-    if (memo[order] === undefined) {
-        memo[order] = coefficient;
-    } else {
-        memo[order] += coefficient;
-    }
-} 
-
 function parse(equation) {
-    const matches = [... equation.matchAll(/(-?\d+x?)/g)];
+    const matches = [... equation.matchAll(/(-?\d+)(x\^(\d+))?/g)];
     return matches.map((match) => {
-        return match[1]; // gets an array of terms: [1,2x,3x,6]
-    }).reduce((memo, match) => {   
-        if (match.includes("x")) {
-            if (memo[1] === undefined) {
-                memo[1] = 0
-            }
-            memo[1] += parseInt(match.replace("x",""));
-        } else {
-            if (memo[0] === undefined) {
-                memo[0] = 0
-            }
-            memo[0] += parseInt(match);
+        return { coefficient: parseInt(match[1]), power: match[3] || 0 }
+    }).reduce((memo, {coefficient, power}) => {
+        if (memo[power] === undefined) {
+            memo[power] = 0;
         }
+        memo[power] += coefficient;
         return memo;
-    }, {})
+    } , {})
 }
 
 if (TESTING) {
