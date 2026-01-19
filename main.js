@@ -28,9 +28,16 @@ class Term {
         return new Term(termA.coefficient + termB.coefficient, termA.exponent);
     }
 
+    static compare(termA, termB) {
+        return termB.exponent - termA.exponent;
+    }
+
     static toString(term) {
         let returnString = ""
-        if (term.coefficient > 1) {
+        if (Math.abs(term.coefficient) === 1  && term.exponent === 0) {
+            returnString += term.coefficient;
+        }
+        if (Math.abs(term.coefficient) > 1) {
             returnString += term.coefficient;
         }
         if (term.exponent > 0) {
@@ -72,13 +79,14 @@ class Equation {
 
     static toString(equation) {
         const equationString = Object.values(equation.terms)
+            .sort(Term.compare)
             .map(Term.toString)
             .reduce((memo, term) => {
                 memo += "+" + term;
                 return memo;
             }, "")
 
-        if (equationString === "+") return "0";
+        if (equationString === "+" || equationString === undefined) return "0";
         
         return equationString
             .replace(/^\+/,"")
