@@ -3,7 +3,6 @@ const assert = require("assert");
 // pass in command line arg to enable tests
 const TESTING = process.argv[2];
 
-
 class Term {
     static regexDefinition = /(-?\d+?)x?(\^(\d)+)?/g;
 
@@ -74,7 +73,7 @@ class Equation {
     }
 }
 
-console.log(Equation.parse("2+3+5x-x").derivativeEquation())
+// --------------- OLD CODE ------------------
 
 function differentiateTerms(terms) {
     return Object.entries(terms)
@@ -87,11 +86,6 @@ function differentiateTerms(terms) {
             return [exponent - 1, exponent * coefficient];
         })
         .filter(terms => terms !== undefined); 
-}
-
-if (TESTING) {
-    assert.deepEqual(toDerivativeString([[1, 2]]), "+2x");
-    assert.deepEqual(postProcess("+2x"), "2x");
 }
 
 function toDerivativeString(terms) {
@@ -124,16 +118,6 @@ function postProcess(equation) {
         .replace(/1x/g, "x");
 }
 
-if (TESTING) {
-    assert.deepEqual(parse("1"), {0: 1})
-    assert.deepEqual(parse("1+1"), {0: 2})
-    assert.deepEqual(parse("1+1-5"), {0: -3})
-    assert.deepEqual(parse("1+2x^1"), {0: 1, 1: 2})
-    assert.deepEqual(parse("1+2x^1+3x^2"), {0: 1, 1: 2, 2:3})
-    assert.deepEqual(parse("-100x^34"), {34: -100})
-    assert.deepEqual(parse("2x^6-100x^34"), {6: 2, 34: -100})
-}
-
 function parse(equation) {
     const matches = [... equation.matchAll(/(-?\d+)(x\^(\d+))?/g)];
     return matches.map((match) => {
@@ -147,18 +131,12 @@ function parse(equation) {
     } , {})
 }
 
-if (TESTING) {
-    assert.deepEqual(preprocess("5"), "5")
-    assert.deepEqual(preprocess("- 5"), "-5")
-    assert.deepEqual(preprocess("x"), "1x^1")
-    assert.deepEqual(preprocess("-x"), "-1x^1")
-    assert.deepEqual(preprocess("1+x"), "1+1x^1")
-    assert.deepEqual(preprocess("1-x-1"), "1-1x^1-1")
-    assert.deepEqual(preprocess("x^2"), "1x^2")
-}
-
 function preprocess(equation) {
-    return equation.replaceAll(/\s/g,"").replaceAll(/-x/g,"-1x").replaceAll(/(?<!\d)x/g, "1x").replaceAll(/x(?!\^)/g, "x^1")
+    return equation
+        .replaceAll(/\s/g,"")
+        .replaceAll(/-x/g,"-1x")
+        .replaceAll(/(?<!\d)x/g, "1x")
+        .replaceAll(/x(?!\^)/g, "x^1")
 }
 
 // assume variable is always named x
