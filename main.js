@@ -9,10 +9,10 @@ class Term {
         this.exponent = parseInt(exponent);
     }
 
-    static regexDefinition = /(-?\d+?)x?(\^(\d)+)?/g;
-
-    static parse(match) {
-        return new Term(match[1] || 1, match[3] || 0)
+    static parseTerms(equationString) {
+        return equationString
+            .matchAll(/(-?\d+?)x?(\^(\d)+)?/g)
+            .map(match => new Term(match[1] || 1, match[3] || 0));
     }
 
     static derivative(term) {
@@ -44,31 +44,53 @@ class Term {
 }
 
 class Equation {
+    // this.terms is an object mapping {exponent: Term of the same exponent}
     constructor(termsArray) {
         this.terms = termsArray
             .reduce((memo, term) => {
                 if (memo[term.exponent] === undefined) {
                     memo[term.exponent] = term;
                 } else {
-                    memo[term.exponent] = memo[term.exponent].merge(term);
+                    memo[term.exponent] = Term.merge(memo[term.exponent], term);
                 }
                 return memo;
             }, {});
     }
 
     static parse(equationString) {
-        const terms = equationString
+        const postProcessedEquation = equationString
             .replaceAll(/\s/g,"")
             .replaceAll(/-x/g,"-1x")
             .replaceAll(/(?<!\d)x/g, "1x")
             .replaceAll(/x(?!\^)/g, "x^1")
-            .matchAll(Term.regexDefinition)
-            .map(Term.parse);
-        return new Equation(terms)
+        return new Equation(Term.parseTerms(postProcessedEquation))
     }
 
     static derivative(equation) {
-        return new Equation(Object.values(equation.terms).map(term => term.derivativeTerm()));
+        return new Equation(Object.values(equation.terms).map(Term.derivative));
+    }
+
+    static toString(equation) {
+        const equationString = Object.values(equation.terms)
+            .map(Term.toString)
+            .reduce((memo, term) => {
+                memo += "+" + term;
+            }, "")
+
+        if (equationString === "") return "0";
+        
+        return equationString
+            .replace(/^\+/,"")
+            .replace(/\+-/g, "-")
+            .replace(/1x/g, "x");
+    }
+
+    differentiate() {
+        return Equation.derivative(this);
+    }
+
+    toString() {
+        return Equation.toString(this);
     }
 }
 
@@ -140,7 +162,8 @@ function preprocess(equation) {
 
 // assume variable is always named x
 function differentiate(equation) {
-    return postProcess(toDerivativeString(differentiateTerms(parse(preprocess(equation)))));
+    return Equation.parse(equation).differentiate().toString();
+    // return postProcess(toDerivativeString(differentiateTerms(parse(preprocess(equation)))));
 }
 
 if (TESTING) {
