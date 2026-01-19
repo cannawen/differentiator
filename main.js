@@ -3,6 +3,37 @@ const assert = require("assert");
 // pass in command line arg to enable tests
 const TESTING = process.argv[2];
 
+class Equation {
+    constructor(equationString) {
+        this.equationString = this.equationString;
+    }
+}
+
+class Term {
+    constructor(coefficient, exponent) {
+        this.coefficient = parseInt(coefficient);
+        this.exponent = parseInt(exponent);
+    }
+
+    derivativeTerm() {
+        return new Term(this.coefficient * this.exponent, this.exponent - 1);
+    }
+
+    toString() {
+        const returnString = ""
+        if (this.coefficient > 1) {
+            returnString += this.coefficient;
+        }
+        if (this.exponent > 0) {
+            returnString += "x";
+        }
+        if (this.exponent > 1) {
+            returnString += "^" + this.exponent
+        }
+        return returnString;
+    }
+}
+
 if (TESTING) {
     assert.deepEqual(differentiateTerms({2: 1}), [[1, 2]])
 }
@@ -18,8 +49,6 @@ function differentiateTerms(terms) {
             return [exponent - 1, exponent * coefficient];
         })
         .filter(terms => terms !== undefined); 
-    // TODO Kind of sus we are turning a map {exp:coef,...} into a 2D array [[exp coef],...] randomly halfway through our program
-    // Perhaps create a new data structure?
 }
 
 if (TESTING) {
@@ -115,5 +144,4 @@ if (TESTING) {
     assert.deepEqual("4x+1",differentiate("x+2x^2"));
     assert.deepEqual("0",differentiate("4x^500-4x^500"));
     assert.deepEqual("0",differentiate("-0-0x^1-0x^0-0x"));
-
 }
