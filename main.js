@@ -3,20 +3,31 @@ const assert = require("assert");
 // pass in command line arg to enable tests
 const TESTING = process.argv[2];
 
-class Equation {
-    constructor(equationString) {
-        this.equationString = this.equationString;
-    }
-}
 
 class Term {
+    static regexDefinition = /(-?\d+?)x?(\^(\d)+)?/g;
+
+    static parse(match) {
+        return new Term(match[1] || 1, match[3] || 0)
+    }
+
     constructor(coefficient, exponent) {
         this.coefficient = parseInt(coefficient);
         this.exponent = parseInt(exponent);
     }
 
+    // Should I make this a static and pass in the term?
     derivativeTerm() {
+        if (this.exponent === 0) {
+            return new Term(0, 0);
+        }
         return new Term(this.coefficient * this.exponent, this.exponent - 1);
+    }
+
+    // Similarily, make this static and pass in 2 terms to merge?
+    merge(term) {
+        assert.deepEqual(term.exponent, this.exponent, "Unable to merge two terms with different exponents")
+        return new Term(this.coefficient + term.coefficient, this.exponent);
     }
 
     toString() {
@@ -34,9 +45,36 @@ class Term {
     }
 }
 
-if (TESTING) {
-    assert.deepEqual(differentiateTerms({2: 1}), [[1, 2]])
+class Equation {
+    static parse(equationString) {
+        const terms = equationString
+            .replaceAll(/\s/g,"")
+            .replaceAll(/-x/g,"-1x")
+            .replaceAll(/(?<!\d)x/g, "1x")
+            .replaceAll(/x(?!\^)/g, "x^1")
+            .matchAll(Term.regexDefinition)
+            .map(Term.parse);
+        return new Equation(terms)
+    }
+
+    constructor(termsArray) {
+        this.terms = termsArray
+            .reduce((memo, term) => {
+                if (memo[term.exponent] === undefined) {
+                    memo[term.exponent] = term;
+                } else {
+                    memo[term.exponent] = memo[term.exponent].merge(term);
+                }
+                return memo;
+            }, {});
+    }
+
+    derivativeEquation() {
+        return new Equation(Object.values(this.terms).map(term => term.derivativeTerm()));
+    }
 }
+
+console.log(Equation.parse("2+3+5x-x").derivativeEquation())
 
 function differentiateTerms(terms) {
     return Object.entries(terms)
