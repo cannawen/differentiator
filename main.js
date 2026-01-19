@@ -9,41 +9,41 @@ class Term {
         this.exponent = parseInt(exponent);
     }
 
-    static parseAllTerms(equationString) {
+    static parseTerms(equationString) {
         return equationString
             .matchAll(/(-?\d+?)x?(\^(\d)+)?/g)
             .map(match => new Term(match[1] || 1, match[3] || 0));
     }
 
-    derivative() {
-        if (this.exponent === 0) {
+    static derivative(term) {
+        if (term.exponent === 0) {
             return new Term(0, 0);
         }
-        return new Term(this.coefficient * this.exponent, this.exponent - 1);
+        return new Term(term.coefficient * term.exponent, term.exponent - 1);
     }
 
-    merge(term) {
-        assert.deepEqual(this.exponent, term.exponent, "Unable to merge two terms with different exponents")
-        return new Term(this.coefficient + term.coefficient, this.exponent);
+    static merge(termA, termB) {
+        assert.deepEqual(termA.exponent, termB.exponent, "Unable to merge two terms with different exponents")
+        return new Term(termA.coefficient + termB.coefficient, termA.exponent);
     }
 
-    compare(term) {
-        return term.exponent - this.exponent;
+    static compare(termA, termB) {
+        return termB.exponent - termA.exponent;
     }
 
-    toString() {
+    static toString(term) {
         let returnString = ""
-        if (Math.abs(this.coefficient) === 1  && this.exponent === 0) {
-            returnString += this.coefficient;
+        if (Math.abs(term.coefficient) === 1  && term.exponent === 0) {
+            returnString += term.coefficient;
         }
-        if (Math.abs(this.coefficient) > 1) {
-            returnString += this.coefficient;
+        if (Math.abs(term.coefficient) > 1) {
+            returnString += term.coefficient;
         }
-        if (this.exponent > 0) {
+        if (term.exponent > 0) {
             returnString += "x";
         }
-        if (this.exponent > 1) {
-            returnString += "^" + this.exponent;
+        if (term.exponent > 1) {
+            returnString += "^" + term.exponent;
         }
         return returnString;
     }
@@ -58,7 +58,7 @@ class Equation {
                 if (memo[term.exponent] === undefined) {
                     memo[term.exponent] = term;
                 } else {
-                    memo[term.exponent] = memo[term.exponent].merge(term);
+                    memo[term.exponent] = Term.merge(memo[term.exponent], term);
                 }
                 return memo;
             }, {});
@@ -70,17 +70,17 @@ class Equation {
             .replaceAll(/-x/g,"-1x")
             .replaceAll(/(?<!\d)x/g, "1x")
             .replaceAll(/x(?!\^)/g, "x^1")
-        return new Equation(Term.parseAllTerms(postProcessedEquation));
+        return new Equation(Term.parseTerms(postProcessedEquation));
     }
 
     differentiate() {
-        return new Equation(Object.values(this.terms).map(term => term.derivative()));
+        return new Equation(Object.values(this.terms).map(Term.derivative))
     }
 
     toString() {
         const equationString = Object.values(this.terms)
-            .sort((termA, termB) => termA.compare(termB))
-            .map(term => term.toString())
+            .sort(Term.compare)
+            .map(Term.toString)
             .reduce((memo, term) => {
                 memo += "+" + term;
                 return memo;
