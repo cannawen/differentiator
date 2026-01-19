@@ -29,7 +29,7 @@ class Term {
     }
 
     static toString(term) {
-        const returnString = ""
+        let returnString = ""
         if (term.coefficient > 1) {
             returnString += term.coefficient;
         }
@@ -75,9 +75,10 @@ class Equation {
             .map(Term.toString)
             .reduce((memo, term) => {
                 memo += "+" + term;
+                return memo;
             }, "")
 
-        if (equationString === "") return "0";
+        if (equationString === "+") return "0";
         
         return equationString
             .replace(/^\+/,"")
@@ -163,7 +164,6 @@ function preprocess(equation) {
 // assume variable is always named x
 function differentiate(equation) {
     return Equation.parse(equation).differentiate().toString();
-    // return postProcess(toDerivativeString(differentiateTerms(parse(preprocess(equation)))));
 }
 
 if (TESTING) {
