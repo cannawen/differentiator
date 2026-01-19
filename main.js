@@ -22,11 +22,6 @@ class Term {
         return new Term(term.coefficient * term.exponent, term.exponent - 1);
     }
 
-    static merge(termA, termB) {
-        assert.deepEqual(termA.exponent, termB.exponent, "Unable to merge two terms with different exponents")
-        return new Term(termA.coefficient + termB.coefficient, termA.exponent);
-    }
-
     static compare(termA, termB) {
         return termB.exponent - termA.exponent;
     }
@@ -47,6 +42,18 @@ class Term {
         }
         return returnString;
     }
+
+    merge(term) {
+        if (term === undefined) {
+            return this;
+        }
+        assert.deepEqual(this.exponent, term.exponent, "Unable to merge two terms with different exponents")
+        return new Term(this.coefficient + term.coefficient, this.exponent);
+    }
+
+    isZero() {
+        return this.coefficient === 0;
+    }
 }
 
 class Equation {
@@ -55,11 +62,14 @@ class Equation {
     constructor(termsArray) {
         this.terms = termsArray
             .reduce((memo, term) => {
-                if (memo[term.exponent] === undefined) {
-                    memo[term.exponent] = term;
+                const newTerm = term.merge(memo[term.exponent]);
+
+                if (newTerm.isZero()) {
+                    delete memo[term.exponent];
                 } else {
-                    memo[term.exponent] = Term.merge(memo[term.exponent], term);
+                    memo[term.exponent] = newTerm;
                 }
+                
                 return memo;
             }, {});
     }
@@ -86,7 +96,7 @@ class Equation {
                 return memo;
             }, "");
 
-        if (equationString === "+" || equationString === undefined) return "0";
+        if (equationString === "" || equationString === undefined) return "0";
         
         return equationString
             .replace(/^\+/,"")
@@ -114,7 +124,7 @@ if (TESTING) {
     assert.deepEqual("-4x",differentiate("-2x^2"));
     assert.deepEqual("-4x+1",differentiate("x-2x^2"));
     assert.deepEqual("4x+1",differentiate("x+2x^2"));
-    assert.deepEqual("0",differentiate("4x^500-4x^500"));
+    assert.deepEqual("0",differentiate("4x^500-4x^500+1-1"));
     assert.deepEqual("0",differentiate("-0-0x^1-0x^0-0x"));
 
     // How to handle multiplication of polynomials? i.e. (x+1)(x-1)
