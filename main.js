@@ -23,8 +23,8 @@ function differentiateTerms(terms) {
 }
 
 if (TESTING) {
-    assert.deepEqual(toDerivativeString([[1, 2]]), "+2x^1");
-    assert.deepEqual(postProcess("+2x^1"), "2x");
+    assert.deepEqual(toDerivativeString([[1, 2]]), "+2x");
+    assert.deepEqual(postProcess("+2x"), "2x");
 }
 
 function toDerivativeString(terms) {
@@ -34,20 +34,29 @@ function toDerivativeString(terms) {
     return terms
         // .sort((termA, termB) => termA[0] - termB[0])
         .reduce((memo, [exponent, coefficient]) => {
-            memo += "+" + coefficient + "x^" + exponent;
+            if (coefficient === 0) return memo;
+            
+            memo += "+" + coefficient
+            switch (exponent) {
+                case 0:
+                    break;
+                case 1:
+                    memo += "x";
+                    break;
+                default:
+                    memo += "x^" + exponent;
+                    break;
+            }
             return memo;
-        },"");
+        }, "");
 }
 
 function postProcess(equation) {
     if (equation === "0") return equation;
     return equation
         .replace(/^\+/,"")
-        .replace(/1x/g, "x")
-        .replace(/x\^1/g, "x")
-        .replace(/x\^0/g, "")
-        .replace(/[+-]0(x\^\d+)?/g, "")
-        .replace(/\+-/g, "-");
+        .replace(/\+-/g, "-")
+        .replace(/1x/g, "x");
 }
 
 if (TESTING) {
