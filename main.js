@@ -23,7 +23,6 @@ class Term {
     }
 
     static merge(termA, termB) {
-        // Could remove this assert and just return termA termB as two separate arrays and flatMap it outside
         assert.deepEqual(termA.exponent, termB.exponent, "Unable to merge two terms with different exponents")
         return new Term(termA.coefficient + termB.coefficient, termA.exponent);
     }
@@ -44,14 +43,15 @@ class Term {
             returnString += "x";
         }
         if (term.exponent > 1) {
-            returnString += "^" + term.exponent
+            returnString += "^" + term.exponent;
         }
         return returnString;
     }
 }
 
 class Equation {
-    // this.terms is an object mapping {exponent: Term of the same exponent}
+    // this.terms is an object mapping {exponent: term, ...} 
+    // where the term has the same exponent as the key
     constructor(termsArray) {
         this.terms = termsArray
             .reduce((memo, term) => {
@@ -70,7 +70,7 @@ class Equation {
             .replaceAll(/-x/g,"-1x")
             .replaceAll(/(?<!\d)x/g, "1x")
             .replaceAll(/x(?!\^)/g, "x^1")
-        return new Equation(Term.parseTerms(postProcessedEquation))
+        return new Equation(Term.parseTerms(postProcessedEquation));
     }
 
     static derivative(equation) {
@@ -84,7 +84,7 @@ class Equation {
             .reduce((memo, term) => {
                 memo += "+" + term;
                 return memo;
-            }, "")
+            }, "");
 
         if (equationString === "+" || equationString === undefined) return "0";
         
