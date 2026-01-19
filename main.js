@@ -4,58 +4,46 @@ const assert = require("assert");
 const TESTING = process.argv[2];
 
 class Term {
+    constructor(coefficient, exponent) {
+        this.coefficient = parseInt(coefficient);
+        this.exponent = parseInt(exponent);
+    }
+
     static regexDefinition = /(-?\d+?)x?(\^(\d)+)?/g;
 
     static parse(match) {
         return new Term(match[1] || 1, match[3] || 0)
     }
 
-    constructor(coefficient, exponent) {
-        this.coefficient = parseInt(coefficient);
-        this.exponent = parseInt(exponent);
-    }
-
-    // Should I make this a static and pass in the term?
-    derivativeTerm() {
-        if (this.exponent === 0) {
+    static derivative(term) {
+        if (term.exponent === 0) {
             return new Term(0, 0);
         }
-        return new Term(this.coefficient * this.exponent, this.exponent - 1);
+        return new Term(term.coefficient * term.exponent, term.exponent - 1);
     }
 
-    // Similarily, make this static and pass in 2 terms to merge?
-    merge(term) {
-        assert.deepEqual(term.exponent, this.exponent, "Unable to merge two terms with different exponents")
-        return new Term(this.coefficient + term.coefficient, this.exponent);
+    static merge(termA, termB) {
+        // Could remove this assert and just return termA termB as two separate arrays and flatMap it outside
+        assert.deepEqual(termA.exponent, termB.exponent, "Unable to merge two terms with different exponents")
+        return new Term(termA.coefficient + termB.coefficient, termA.exponent);
     }
 
-    toString() {
+    static toString(term) {
         const returnString = ""
-        if (this.coefficient > 1) {
-            returnString += this.coefficient;
+        if (term.coefficient > 1) {
+            returnString += term.coefficient;
         }
-        if (this.exponent > 0) {
+        if (term.exponent > 0) {
             returnString += "x";
         }
-        if (this.exponent > 1) {
-            returnString += "^" + this.exponent
+        if (term.exponent > 1) {
+            returnString += "^" + term.exponent
         }
         return returnString;
     }
 }
 
 class Equation {
-    static parse(equationString) {
-        const terms = equationString
-            .replaceAll(/\s/g,"")
-            .replaceAll(/-x/g,"-1x")
-            .replaceAll(/(?<!\d)x/g, "1x")
-            .replaceAll(/x(?!\^)/g, "x^1")
-            .matchAll(Term.regexDefinition)
-            .map(Term.parse);
-        return new Equation(terms)
-    }
-
     constructor(termsArray) {
         this.terms = termsArray
             .reduce((memo, term) => {
@@ -68,8 +56,19 @@ class Equation {
             }, {});
     }
 
-    derivativeEquation() {
-        return new Equation(Object.values(this.terms).map(term => term.derivativeTerm()));
+    static parse(equationString) {
+        const terms = equationString
+            .replaceAll(/\s/g,"")
+            .replaceAll(/-x/g,"-1x")
+            .replaceAll(/(?<!\d)x/g, "1x")
+            .replaceAll(/x(?!\^)/g, "x^1")
+            .matchAll(Term.regexDefinition)
+            .map(Term.parse);
+        return new Equation(terms)
+    }
+
+    static derivative(equation) {
+        return new Equation(Object.values(equation.terms).map(term => term.derivativeTerm()));
     }
 }
 
