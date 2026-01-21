@@ -126,6 +126,7 @@ if (TESTING) {
     assert.deepEqual("4x+1",differentiate("x+2x^2"));
     assert.deepEqual("0",differentiate("4x^500-4x^500+1-1"));
     assert.deepEqual("0",differentiate("-0-0x^1-0x^0-0x"));
+    assert.deepEqual("0",differentiate("x^0-2x^0"));
 
     // How to handle multiplication of polynomials? i.e. (x+1)(x-1)
     // 1) Calculate multiplication in preproccessing step using FOIL: x^2-x+x-1 and then take derivative as normal
