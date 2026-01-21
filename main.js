@@ -15,30 +15,30 @@ class Term {
             .map(match => new Term(match[1] || 1, match[3] || 0));
     }
 
-    static derivative(term) {
-        if (term.exponent === 0) {
+    derivative() {
+        if (this.exponent === 0) {
             return new Term(0, 0);
         }
-        return new Term(term.coefficient * term.exponent, term.exponent - 1);
+        return new Term(this.coefficient * this.exponent, this.exponent - 1);
     }
 
-    static compare(termA, termB) {
-        return termB.exponent - termA.exponent;
+    compare(term) {
+        return term.exponent - this.exponent;
     }
 
-    static toString(term) {
+    toString() {
         let returnString = ""
-        if (Math.abs(term.coefficient) === 1  && term.exponent === 0) {
-            returnString += term.coefficient;
+        if (Math.abs(this.coefficient) === 1  && this.exponent === 0) {
+            returnString += this.coefficient;
         }
-        if (Math.abs(term.coefficient) > 1) {
-            returnString += term.coefficient;
+        if (Math.abs(this.coefficient) > 1) {
+            returnString += this.coefficient;
         }
-        if (term.exponent > 0) {
+        if (this.exponent > 0) {
             returnString += "x";
         }
-        if (term.exponent > 1) {
-            returnString += "^" + term.exponent;
+        if (this.exponent > 1) {
+            returnString += "^" + this.exponent;
         }
         return returnString;
     }
@@ -58,7 +58,7 @@ class Term {
 
 class Equation {
     // this.terms is an object mapping {exponent: term, ...} 
-    // where the term has the same exponent as the key
+    // where the term has the same exponent number as the key
     constructor(termsArray) {
         this.terms = termsArray
             .reduce((memo, term) => {
@@ -84,13 +84,13 @@ class Equation {
     }
 
     differentiate() {
-        return new Equation(Object.values(this.terms).map(Term.derivative))
+        return new Equation(Object.values(this.terms).map(term => term.derivative()))
     }
 
     toString() {
         const equationString = Object.values(this.terms)
-            .sort(Term.compare)
-            .map(Term.toString)
+            .sort((termA, termB) => termA.compare(termB))
+            .map(term => term.toString())
             .reduce((memo, term) => {
                 memo += "+" + term;
                 return memo;
