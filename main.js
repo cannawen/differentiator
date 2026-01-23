@@ -27,7 +27,7 @@ class Term {
     }
 
     toString() {
-        let returnString = ""
+        let returnString = "";
         if (Math.abs(this.coefficient) === 1  && this.exponent === 0) {
             returnString += this.coefficient;
         }
