@@ -73,6 +73,8 @@ class Equation {
     static parse(equationString) {
         const terms = equationString
             .replaceAll(/\s/g,"")
+            .replaceAll(/-/g,"+-")
+            .replaceAll(/[+\^](-?\d+)[+$]/g, "$1x^0")
             .replaceAll(/-x/g,"-1x")
             .replaceAll(/(?<!\d)x/g, "1x")
             .replaceAll(/x(?!\^)/g, "x^1")
