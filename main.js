@@ -1,4 +1,4 @@
-const assert = require("assert");
+import { deepEqual } from "assert";
 
 // pass in command line arg to enable tests
 const TESTING = process.argv[2];
@@ -43,7 +43,7 @@ class Term {
     }
 
     merge(term) {
-        assert.deepEqual(this.exponent, term.exponent, "Unable to merge two terms with different exponents")
+        deepEqual(this.exponent, term.exponent, "Unable to merge two terms with different exponents")
         return new Term(this.coefficient + term.coefficient, this.exponent);
     }
 
@@ -111,23 +111,23 @@ function differentiate(equation) {
 
 if (TESTING) {
     console.log("Running tests")
-    assert.deepEqual("0",differentiate("2"));
-    assert.deepEqual("0",differentiate("2+5"));
-    assert.deepEqual("2",differentiate("2x"));
-    assert.deepEqual("2",differentiate("2x+5"));
-    assert.deepEqual("4",differentiate("2x+2x"));
-    assert.deepEqual("1",differentiate("x"));
-    assert.deepEqual("-1",differentiate("-x"));
-    assert.deepEqual("-2000",differentiate("-2000x"));
-    assert.deepEqual("-3",differentiate("-5x+2x+8-9"));
-    assert.deepEqual("2x",differentiate("x^2"));
-    assert.deepEqual("-4x",differentiate("-2x^2"));
-    assert.deepEqual("-4x+1",differentiate("x-2x^2"));
-    assert.deepEqual("4x+1",differentiate("x+2x^2"));
-    assert.deepEqual("0",differentiate("4x^500-4x^500+1-1"));
-    assert.deepEqual("0",differentiate("-0-0x^1-0x^0-0x"));
-    assert.deepEqual("0",differentiate("x^0-2x^0"));
-    assert.deepEqual("-200x^99",differentiate("x^0-2x^100"));
+    deepEqual("0",differentiate("2"));
+    deepEqual("0",differentiate("2+5"));
+    deepEqual("2",differentiate("2x"));
+    deepEqual("2",differentiate("2x+5"));
+    deepEqual("4",differentiate("2x+2x"));
+    deepEqual("1",differentiate("x"));
+    deepEqual("-1",differentiate("-x"));
+    deepEqual("-2000",differentiate("-2000x"));
+    deepEqual("-3",differentiate("-5x+2x+8-9"));
+    deepEqual("2x",differentiate("x^2"));
+    deepEqual("-4x",differentiate("-2x^2"));
+    deepEqual("-4x+1",differentiate("x-2x^2"));
+    deepEqual("4x+1",differentiate("x+2x^2"));
+    deepEqual("0",differentiate("4x^500-4x^500+1-1"));
+    deepEqual("0",differentiate("-0-0x^1-0x^0-0x"));
+    deepEqual("0",differentiate("x^0-2x^0"));
+    deepEqual("-200x^99",differentiate("x^0-2x^100"));
     console.log("All tests passing");
 
     // How to handle multiplication of polynomials? i.e. (x+1)(x-1)
