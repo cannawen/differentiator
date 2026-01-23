@@ -10,7 +10,7 @@ class Term {
     }
 
     static parseTerm(equationString) {
-        const match = equationString.match(/^\+?(-?\d+)?x?\^?(\d+)?$/); // https://regex101.com/
+        const match = equationString.match(/^(-?\d+)x\^(\d+)$/); // https://regex101.com/
         return new Term(match[1] || 1, match[2] || 0);
     }
 
@@ -71,17 +71,16 @@ class Equation {
     }
 
     static parse(equationString) {
-        const standardizedString = equationString
+        const terms = equationString
             .replaceAll(/\s/g,"")
             .replace(/^/,"+")
             .replaceAll(/(?<!\^|\d)(\d+)(?=[+-]|$)/g,"$1x^0")
             .replaceAll(/(?<!\+)-/g, "+-")
             .replaceAll(/-x/g,"-1x")
             .replaceAll(/(?<!\d)x/g, "1x")
-            .replaceAll(/x(?!\^)/g, "x^1");
-        console.log(standardizedString)
-        const terms = standardizedString
+            .replaceAll(/x(?!\^)/g, "x^1")
             .split("+")
+            .filter((term) => term.length > 0)
             .map(Term.parseTerm);
 
         return new Equation(terms);
