@@ -9,10 +9,9 @@ class Term {
         this.exponent = parseInt(exponent);
     }
 
-    static parseTerms(equationString) {
-        return equationString
-            .matchAll(/(-?\d+?)x?(\^(\d+))?/g)
-            .map(match => new Term(match[1] || 1, match[3] || 0));
+    static parseTerm(equationString) {
+        const match = equationString.match(/^\+?(-?\d+?)x?(\^(\d+))?$/) // https://regex101.com/
+        return new Term(match[1] || 1, match[3] || 0);
     }
 
     derivative() {
@@ -72,12 +71,15 @@ class Equation {
     }
 
     static parse(equationString) {
-        const postProcessedEquation = equationString
+        const terms = equationString
             .replaceAll(/\s/g,"")
             .replaceAll(/-x/g,"-1x")
             .replaceAll(/(?<!\d)x/g, "1x")
             .replaceAll(/x(?!\^)/g, "x^1")
-        return new Equation(Term.parseTerms(postProcessedEquation));
+            .matchAll(/[+-]?[^+-]+/g) // claude helped me with this line
+            .map(match => match[0])
+            .map(Term.parseTerm);
+        return new Equation(terms);
     }
 
     differentiate() {
@@ -116,7 +118,7 @@ if (TESTING) {
     assert.deepEqual("4",differentiate("2x+2x"));
     assert.deepEqual("1",differentiate("x"));
     assert.deepEqual("-1",differentiate("-x"));
-    assert.deepEqual("-2",differentiate("-2x"));
+    assert.deepEqual("-2000",differentiate("-2000x"));
     assert.deepEqual("-3",differentiate("-5x+2x+8-9"));
     assert.deepEqual("2x",differentiate("x^2"));
     assert.deepEqual("-4x",differentiate("-2x^2"));
