@@ -71,16 +71,19 @@ class Equation {
     }
 
     static parse(equationString) {
-        const terms = equationString
+        const standardizedString = equationString
             .replaceAll(/\s/g,"")
-            .replaceAll(/-/g,"+-")
-            .replaceAll(/[+\^](-?\d+)[+$]/g, "$1x^0")
+            .replace(/^/,"+")
+            .replaceAll(/(?<!\^|\d)(\d+)(?=[+-]|$)/g,"$1x^0")
+            .replaceAll(/(?<!\+)-/g, "+-")
             .replaceAll(/-x/g,"-1x")
             .replaceAll(/(?<!\d)x/g, "1x")
-            .replaceAll(/x(?!\^)/g, "x^1")
-            .matchAll(/[+-]?[^+-]+/g) // claude helped me with this line, I was so done with dealing with regular expressions
-            .map(match => match[0])
+            .replaceAll(/x(?!\^)/g, "x^1");
+        console.log(standardizedString)
+        const terms = standardizedString
+            .split("+")
             .map(Term.parseTerm);
+
         return new Equation(terms);
     }
 
