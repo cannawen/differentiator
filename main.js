@@ -11,7 +11,7 @@ class Term {
 
     static parseTerms(equationString) {
         return equationString
-            .matchAll(/(-?\d+?)x?(\^(\d)+)?/g)
+            .matchAll(/(-?\d+?)x?(\^(\d+))?/g)
             .map(match => new Term(match[1] || 1, match[3] || 0));
     }
 
@@ -125,6 +125,7 @@ if (TESTING) {
     assert.deepEqual("0",differentiate("4x^500-4x^500+1-1"));
     assert.deepEqual("0",differentiate("-0-0x^1-0x^0-0x"));
     assert.deepEqual("0",differentiate("x^0-2x^0"));
+    assert.deepEqual("-200x^99",differentiate("x^0-2x^100"));
     console.log("All tests passing");
 
     // How to handle multiplication of polynomials? i.e. (x+1)(x-1)
