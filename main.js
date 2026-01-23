@@ -44,9 +44,6 @@ class Term {
     }
 
     merge(term) {
-        if (term === undefined) {
-            return this;
-        }
         assert.deepEqual(this.exponent, term.exponent, "Unable to merge two terms with different exponents")
         return new Term(this.coefficient + term.coefficient, this.exponent);
     }
@@ -62,7 +59,7 @@ class Equation {
     constructor(termsArray) {
         this.terms = termsArray
             .reduce((memo, term) => {
-                const newTerm = term.merge(memo[term.exponent]);
+                const newTerm = memo[term.exponent] ? term.merge(memo[term.exponent]) : term;
 
                 if (newTerm.isZero()) {
                     delete memo[term.exponent];
