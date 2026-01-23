@@ -10,8 +10,8 @@ class Term {
     }
 
     static parseTerm(equationString) {
-        const match = equationString.match(/^\+?(-?\d+?)x?(\^(\d+))?$/) // https://regex101.com/
-        return new Term(match[1] || 1, match[3] || 0);
+        const match = equationString.match(/^\+?(-?\d+)?x?\^?(\d+)?$/) // https://regex101.com/
+        return new Term(match[1] || 1, match[2] || 0);
     }
 
     derivative() {
@@ -76,7 +76,7 @@ class Equation {
             .replaceAll(/-x/g,"-1x")
             .replaceAll(/(?<!\d)x/g, "1x")
             .replaceAll(/x(?!\^)/g, "x^1")
-            .matchAll(/[+-]?[^+-]+/g) // claude helped me with this line
+            .matchAll(/[+-]?[^+-]+/g) // claude helped me with this line, I was so done with dealing with regular expressions
             .map(match => match[0])
             .map(Term.parseTerm);
         return new Equation(terms);
