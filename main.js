@@ -10,7 +10,7 @@ class Term {
     }
 
     static parseTerm(equationString) {
-        const match = equationString.match(/^\+?(-?\d+)?x?\^?(\d+)?$/) // https://regex101.com/
+        const match = equationString.match(/^\+?(-?\d+)?x?\^?(\d+)?$/); // https://regex101.com/
         return new Term(match[1] || 1, match[2] || 0);
     }
 
@@ -43,7 +43,7 @@ class Term {
     }
 
     merge(term) {
-        deepEqual(this.exponent, term.exponent, "Unable to merge two terms with different exponents")
+        deepEqual(this.exponent, term.exponent, "Unable to merge two terms with different exponents");
         return new Term(this.coefficient + term.coefficient, this.exponent);
     }
 
