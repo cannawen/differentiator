@@ -10,10 +10,9 @@ class Term {
     }
 
     // assume termString always in the format ix^j
-    // where i is a positive or negative integer
-    // and j is a positive integer
+    // where i and j are an integers
     static parseTerm(termString) {
-        const match = termString.match(/^(-?\d+)x\^(\d+)$/); // https://regex101.com/
+        const match = termString.match(/^(-?\d+)x\^(-?\d+)$/); // https://regex101.com/
         return new Term(match[1] || 1, match[2] || 0);
     }
 
@@ -79,10 +78,12 @@ class Equation {
             .replaceAll(/\s/g,"")
             // add + to the start of the string
             .replace(/^/,"+")
+            // add + to the end of the string
+            .replace(/$/,"+")
             // if there is a constant term, append x^0 to it
-            .replaceAll(/(?<!\^|\d)(\d+)(?=[+-]|$)/g,"$1x^0")
-            // if there is a - without a + preceding it, add a + in front of it
-            .replaceAll(/(?<!\+)-/g, "+-")
+            .replaceAll(/[+-](\d+)[+-]/g,"$1x^0")
+            // if there is a - without a + or ^ preceding it, add a + in front of it
+            .replaceAll(/(?<![+^])-/g, "+-")
             // if there is a -x, replace it with -1x
             .replaceAll(/-x/g,"-1x")
             // if there is a solo x, replace it with 1x
@@ -145,6 +146,7 @@ if (TESTING) {
     deepEqual("0",differentiate("-0-0x^1-0x^0-0x"));
     deepEqual("0",differentiate("x^0-2x^0"));
     deepEqual("-200x^99",differentiate("x^0-2x^100"));
+    deepEqual("-100x^99",differentiate("x^-100"));
     console.log("All tests passing");
 
     // How to handle multiplication of polynomials? i.e. (x+1)(x-1)
