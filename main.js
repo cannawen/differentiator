@@ -9,8 +9,11 @@ class Term {
         this.exponent = parseInt(exponent);
     }
 
-    static parseTerm(equationString) {
-        const match = equationString.match(/^(-?\d+)x\^(\d+)$/); // https://regex101.com/
+    // assume termString always in the format ix^j
+    // where i is a positive or negative integer
+    // and j is a positive integer
+    static parseTerm(termString) {
+        const match = termString.match(/^(-?\d+)x\^(\d+)$/); // https://regex101.com/
         return new Term(match[1] || 1, match[2] || 0);
     }
 
@@ -72,14 +75,23 @@ class Equation {
 
     static parse(equationString) {
         const terms = equationString
+            // remove all whitespaces from input string
             .replaceAll(/\s/g,"")
+            // add + to the start of the string
             .replace(/^/,"+")
+            // if there is a constant term, append x^0 to it
             .replaceAll(/(?<!\^|\d)(\d+)(?=[+-]|$)/g,"$1x^0")
+            // if there is a - without a + preceding it, add a + in front of it
             .replaceAll(/(?<!\+)-/g, "+-")
+            // if there is a -x, replace it with -1x
             .replaceAll(/-x/g,"-1x")
+            // if there is a solo x, replace it with 1x
             .replaceAll(/(?<!\d)x/g, "1x")
+            // if there is an x not followed by a ^, replace it with x^1
             .replaceAll(/x(?!\^)/g, "x^1")
+            // split terms; they are always separated by a +
             .split("+")
+            // the first split will be empty
             .filter((term) => term.length > 0)
             .map(Term.parseTerm);
 
@@ -116,6 +128,7 @@ function differentiate(equation) {
 if (TESTING) {
     console.log("Running tests")
     deepEqual("0",differentiate("2"));
+    deepEqual("0",differentiate("-2"));
     deepEqual("0",differentiate("2+5"));
     deepEqual("2",differentiate("2x"));
     deepEqual("2",differentiate("2x+5"));
