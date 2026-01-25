@@ -151,6 +151,8 @@ if (TESTING) {
     assert.deepEqual("100x^99+12x^-3-200x^-101",differentiate("x^100 + 2x^-100 - 6x^-2"));
     console.log("All tests passing");
 
+    // Refactor to use grammar?
+
     // How to handle multiplication of polynomials? i.e. (x+1)(x-1)
     // 1) Calculate multiplication in preproccessing step using FOIL: x^2-x+x-1 and then take derivative as normal
     // 2) Use the product rule f'(x)g'(x) = f'(x)g(x) + f(x)g'(x)
