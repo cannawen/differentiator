@@ -148,7 +148,7 @@ if (TESTING) {
     assert.deepEqual("0",differentiate("x^0-2x^0"));
     assert.deepEqual("-200x^99",differentiate("x^0-2x^100"));
     assert.deepEqual("-100x^-101",differentiate("x^-100"));
-    assert.deepEqual("100x^99+12x^-3-200x^-101",differentiate("x^100+2x^-100-6x^-2"));
+    assert.deepEqual("100x^99+12x^-3-200x^-101",differentiate("x^100 + 2x^-100 - 6x^-2"));
     console.log("All tests passing");
 
     // How to handle multiplication of polynomials? i.e. (x+1)(x-1)
