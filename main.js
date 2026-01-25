@@ -35,10 +35,10 @@ class Term {
         if (Math.abs(this.coefficient) > 1) {
             returnString += this.coefficient;
         }
-        if (this.exponent > 0) {
+        if (Math.abs(this.exponent) > 0) {
             returnString += "x";
         }
-        if (this.exponent > 1) {
+        if (Math.abs(this.exponent) > 1) {
             returnString += "^" + this.exponent;
         }
         return returnString;
