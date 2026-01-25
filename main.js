@@ -73,7 +73,7 @@ class Equation {
     }
 
     static parse(equationString) {
-        const terms = equationString
+        const standardizedEquationString = equationString
             // remove all whitespaces from input string
             .replaceAll(/\s/g,"")
             // add + to the start of the string
@@ -81,7 +81,7 @@ class Equation {
             // add + to the end of the string
             .replace(/$/,"+")
             // if there is a constant term, append x^0 to it
-            .replaceAll(/[+-](\d+)[+-]/g,"$1x^0")
+            .replaceAll(/(?<!\^)([+\-]\d+)(?=[+\-])/g,"$1x^0") // ChatGPT helped with this one
             // if there is a - without a + or ^ preceding it, add a + in front of it
             .replaceAll(/(?<![+^])-/g, "+-")
             // if there is a -x, replace it with -1x
@@ -90,9 +90,10 @@ class Equation {
             .replaceAll(/(?<!\d)x/g, "1x")
             // if there is an x not followed by a ^, replace it with x^1
             .replaceAll(/x(?!\^)/g, "x^1")
+        const terms = standardizedEquationString
             // split terms; they are always separated by a +
             .split("+")
-            // the first split will be empty
+            // the first and last split will be empty because we added + at the start and end
             .filter((term) => term.length > 0)
             .map(Term.parseTerm);
 
