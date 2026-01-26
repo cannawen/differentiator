@@ -17,9 +17,6 @@ class Term {
     }
 
     derivative() {
-        if (this.exponent === 0) {
-            return new Term(0, 0);
-        }
         return new Term(this.coefficient * this.exponent, this.exponent - 1);
     }
 
