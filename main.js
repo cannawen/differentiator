@@ -13,7 +13,7 @@ class Term {
     // where i and j are integers
     static parseTerm(termString) {
         const match = termString.match(/^(-?\d+)x\^(-?\d+)$/); // https://regex101.com/
-        return new Term(match[1] || 1, match[2] || 0);
+        return new Term(match[1], match[2]);
     }
 
     derivative() {
