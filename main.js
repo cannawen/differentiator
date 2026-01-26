@@ -28,20 +28,22 @@ class Term {
     }
 
     toString() {
-        let returnString = "";
-        if (Math.abs(this.coefficient) === 1  && this.exponent === 0) {
-            returnString += this.coefficient;
+        // if coefficient is 0, doesn't matter what exponent is.
+        // there is no term. return empty string
+        if (this.coefficient === 0) {
+            return "";
         }
-        if (Math.abs(this.coefficient) > 1) {
-            returnString += this.coefficient;
+
+        let exponentString;
+        if (this.exponent === 0) {
+            exponentString = ""
+        } else if (this.exponent === 1) {
+            exponentString = "x";
+        } else {
+            exponentString = "x^" + this.exponent.toString();
         }
-        if (Math.abs(this.exponent) > 0) {
-            returnString += "x";
-        }
-        if (Math.abs(this.exponent) > 1) {
-            returnString += "^" + this.exponent;
-        }
-        return returnString;
+
+        return (this.coefficient.toString() + exponentString).replace(/1x/,"x");
     }
 
     merge(term) {
