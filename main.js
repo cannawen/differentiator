@@ -33,7 +33,7 @@ class Term {
 
         let exponentString;
         if (this.exponent === 0) {
-            exponentString = ""
+            exponentString = "";
         } else if (this.exponent === 1) {
             exponentString = "x";
         } else {
