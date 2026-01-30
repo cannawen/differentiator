@@ -29,8 +29,6 @@ class Term {
     }
 
     toString() {
-        // if coefficient is 0, doesn't matter what exponent is.
-        // there is no term. return empty string
         if (this.coefficient === 0) {
             return "";
         }
@@ -44,7 +42,7 @@ class Term {
             exponentString = "x^" + this.exponent.toString();
         }
 
-        return (this.coefficient.toString() + exponentString).replace(/^1x/,"x");
+        return (this.coefficient.toString() + exponentString).replace(/^-?1x/,"x");
     }
 
     merge(term) {
