@@ -99,7 +99,7 @@ class Equation {
         return new Equation(terms);
     }
 
-    differentiate() {
+    derivative() {
         return new Equation(Object.values(this.terms).map(term => term.derivative()))
     }
 
@@ -123,7 +123,7 @@ class Equation {
 
 // assume variable is always named x
 function differentiate(equation) {
-    return Equation.parse(equation).differentiate().toString();
+    return Equation.parse(equation).derivative().toString();
 }
 
 if (TESTING) {
