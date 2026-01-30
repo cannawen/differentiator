@@ -127,11 +127,13 @@ class Equation {
                 return memo;
             }, "");
 
-        if (equationString === "" || equationString === undefined) return "0";
+        if (equationString === "" || equationString === undefined) {
+            return "0";
+        }
         
         return equationString
             .replace(/^\+/,"")
-            .replace(/\+-/g, "-");
+            .replaceAll(/\+-/g, "-");
     }
 }
 
