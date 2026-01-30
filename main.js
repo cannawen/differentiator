@@ -20,6 +20,10 @@ class Term {
         return new Term(this.coefficient * this.exponent, this.exponent - 1);
     }
 
+    multiply(term) {
+        return new Term(this.coefficient * term.coefficient, this.exponent + term.exponent)
+    }
+
     compare(term) {
         return term.exponent - this.exponent;
     }
@@ -57,7 +61,7 @@ class Equation {
     // this.terms is an object mapping {exponent: term, ...} 
     // where the term has the same exponent number as the key
     constructor(termsArray) {
-        this.terms = termsArray
+        this.terms = Object.values(termsArray
             .reduce((memo, term) => {
                 const newTerm = memo[term.exponent] ? term.merge(memo[term.exponent]) : term;
 
@@ -68,7 +72,7 @@ class Equation {
                 }
                 
                 return memo;
-            }, {});
+            }, {}));
     }
 
     static parse(equationString) {
@@ -99,12 +103,25 @@ class Equation {
         return new Equation(terms);
     }
 
+    multiplyEquation(equation) {
+        return new Equation(
+            this.terms
+                .map(term => equation.multiplyTerm(term))
+                .flat()
+        );
+    }
+
+    multiplyTerm(term) {
+        return this.terms
+            .map(t => t.multiply(term));
+    }
+
     derivative() {
-        return new Equation(Object.values(this.terms).map(term => term.derivative()))
+        return new Equation(this.terms.map(term => term.derivative()));
     }
 
     toString() {
-        const equationString = Object.values(this.terms)
+        const equationString = this.terms
             .sort((termA, termB) => termA.compare(termB))
             .map(term => term.toString())
             .reduce((memo, term) => {
@@ -122,7 +139,15 @@ class Equation {
 
 // assume variable is always named x
 function differentiate(equation) {
-    return Equation.parse(equation).derivative().toString();
+    // if we see a ( at the start, assume 2 equations
+    if (equation.match(/^\(/)) {
+        const eq = [... equation.matchAll(/\(([^\(\)]*)\)/g)]
+            .map(match => match[1])
+            .map(string => Equation.parse(string));
+        return eq[0].multiplyEquation(eq[1]).derivative().toString();
+    } else {
+        return Equation.parse(equation).derivative().toString();
+    }
 }
 
 if (TESTING) {
@@ -148,13 +173,7 @@ if (TESTING) {
     assert.deepEqual("-100x^-101",differentiate("x^-100"));
     assert.deepEqual("100x^99+12x^-3-200x^-101",differentiate("x^100 + 2x^-100 - 6x^-2"));
     assert.deepEqual("11x^10",differentiate("x^11"));
+    assert.deepEqual("1", differentiate("(1)(x)"));
+    assert.deepEqual("2x", differentiate("(x+1)(x-1)"));
     console.log("All tests passing");
-
-    // Refactor to use grammar?
-
-    // How to handle multiplication of polynomials? i.e. (x+1)(x-1)
-    // 1) Calculate multiplication in preproccessing step using FOIL: x^2-x+x-1 and then take derivative as normal
-    // 2) Use the product rule f'(x)g'(x) = f'(x)g(x) + f(x)g'(x)
-
-    // Approach 1 seems easier, since in either scenario we need to figure out how to multiply 2 equations together
 }
