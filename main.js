@@ -21,7 +21,7 @@ class Term {
     }
 
     multiply(term) {
-        return new Term(this.coefficient * term.coefficient, this.exponent + term.exponent)
+        return new Term(this.coefficient * term.coefficient, this.exponent + term.exponent);
     }
 
     compare(term) {
@@ -105,13 +105,15 @@ class Equation {
         return new Equation(
             this.terms
                 .map(term => equation.multiplyTerm(term))
+                .map(equation => equation.terms)
                 .flat()
         );
     }
 
     multiplyTerm(term) {
-        return this.terms
-            .map(t => t.multiply(term));
+        return new Equation(
+            this.terms.map(t => t.multiply(term))
+        );
     }
 
     derivative() {
