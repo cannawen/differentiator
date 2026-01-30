@@ -40,7 +40,7 @@ class Term {
             exponentString = "x^" + this.exponent.toString();
         }
 
-        return (this.coefficient.toString() + exponentString).replace(/1x/,"x");
+        return (this.coefficient.toString() + exponentString).replace(/^1x/,"x");
     }
 
     merge(term) {
@@ -116,8 +116,7 @@ class Equation {
         
         return equationString
             .replace(/^\+/,"")
-            .replace(/\+-/g, "-")
-            .replace(/1x/g, "x");
+            .replace(/\+-/g, "-");
     }
 }
 
@@ -148,6 +147,7 @@ if (TESTING) {
     assert.deepEqual("-200x^99",differentiate("x^0-2x^100"));
     assert.deepEqual("-100x^-101",differentiate("x^-100"));
     assert.deepEqual("100x^99+12x^-3-200x^-101",differentiate("x^100 + 2x^-100 - 6x^-2"));
+    assert.deepEqual("11x^10",differentiate("x^11"));
     console.log("All tests passing");
 
     // Refactor to use grammar?
